@@ -288,7 +288,7 @@ func main() {
 
 			// Create directory for saving symbol file.
 			downloadDir := saveDirectory + "/" + pdbName + "/" + pdbGuidStr + "/" + pdbAgeStr + "/"
-			err = os.MkdirAll(downloadDir, 0644)
+			err = os.MkdirAll(downloadDir, 0755)
 			if err != nil {
 				log.Fatal(err)
 			}
