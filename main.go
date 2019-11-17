@@ -266,7 +266,7 @@ func main() {
 		if debugDir.InfoPdb70 != nil {
 			// Get the PDB GUID string.
 			pdbGuid := pe.GuidFromWindowsArray(debugDir.InfoPdb70.Signature)
-			pdbGuidStr, err := pe.GuidFromWindowsArray(debugDir.InfoPdb70.Signature).ToString("N")
+			pdbGuidStr, err := pdbGuid.ToString("N")
 			if err != nil {
 				log.Fatal(err)
 			}
