@@ -51,6 +51,12 @@ Special thanks to Sam O (and Ero Carrera) for a great start to a PE file parser 
 
 https://github.com/soluwalana/pefile-go
 
+LLVM PDB Documentation:
+
+https://llvm.org/docs/PDB/PdbStream.html#matching-a-pdb-to-its-executable
+
+https://github.com/llvm/llvm-project/blob/master/llvm/include/llvm/Object/CVDebugRecord.h
+
 ## License
 
 This project is licensed under the Apache 2.0 license.
