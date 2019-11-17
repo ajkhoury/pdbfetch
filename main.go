@@ -231,7 +231,7 @@ func main() {
 	// Determine the symbol save directory.
 	var saveDirectory string
 	if nArgs > 2 {
-		saveDirectory = os.Args[3]
+		saveDirectory = os.Args[2]
 	} else {
 		absPath, err := filepath.Abs(os.Args[0])
 		if err != nil {
