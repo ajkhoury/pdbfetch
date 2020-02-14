@@ -181,6 +181,8 @@ func downloadSymbolFile(filepath string, url string) error {
 		reader = resp.Body
 	}
 
+	log.Println("Saving PDB to", filepath)
+
 	// Create the file
 	out, err := os.Create(filepath)
 	if err != nil {
