@@ -19,11 +19,7 @@ func (p *PEFile) parseImportDirectory(rva, size uint32) (err error) {
 
 	for {
 		fileOffset := p.getOffsetFromRva(rva)
-		importDesc := NewImportDescriptor(int(fileOffset))
-
-		if importDesc.size+int(rva) > p.dataLen {
-			return errors.New("not enough space for import descriptor")
-		}
+		importDesc := NewImportDescriptor(fileOffset)
 
 		if err = p.parseInterface(&importDesc.ImageImportDescriptor, fileOffset, importDesc.size); err != nil {
 			return err
