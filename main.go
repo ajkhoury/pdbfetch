@@ -196,7 +196,7 @@ func downloadSymbolFile(filepath string, url string) error {
 func help() {
 	fmt.Println("Fetches PDB symbol files directly from Microsoft's symbol servers.")
 	fmt.Println("A PE file is supplied by the `pefile` argument.")
-	fmt.Println("An optional save directory can be supplied bt the `directory` argument.")
+	fmt.Println("An optional save directory can be supplied by the `directory` argument.")
 	fmt.Println("")
 	fmt.Println("Usage:")
 	fmt.Println("   ", filepath.Base(os.Args[0]), "pefile [directory]")
