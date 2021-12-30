@@ -241,10 +241,6 @@ func main() {
 		}
 		saveDirectory = filepath.Dir(absPath)
 	}
-	if saveDirectory[len(saveDirectory)-1] == '\\' ||
-		saveDirectory[len(saveDirectory)-1] == '/' {
-		saveDirectory = saveDirectory[:len(saveDirectory)-1]
-	}
 
 	// Check if the given PE path exists.
 	if _, err := os.Stat(pePath); os.IsNotExist(err) {
@@ -273,12 +269,9 @@ func main() {
 				log.Fatal(err)
 			}
 
-			// Get the PDB name.
-			pdbName := string(debugDir.SymbolName)
-			slashIdx := strings.LastIndexByte(pdbName, byte('\\'))
-			if slashIdx >= 0 {
-				pdbName = pdbName[slashIdx+1:]
-			}
+			// Get the PDB filename.
+			fullPdbPath := string(debugDir.SymbolName)
+			pdbName := filepath.Base(fullPdbPath)
 
 			// Get the PDB age string.
 			pdbAgeStr := strconv.FormatUint(uint64(debugDir.InfoPdb70.Age), 16)
@@ -289,14 +282,14 @@ func main() {
 			log.Println(string(debugDir.SymbolName)+":", pdbGuid, pdbAgeStr, downloadURL)
 
 			// Create directory for saving symbol file.
-			downloadDir := saveDirectory + "/" + pdbName + "/" + pdbGuidStr + "/" + pdbAgeStr + "/"
+			downloadDir := filepath.Join(saveDirectory, pdbName, strings.ToUpper(pdbGuidStr)+strings.ToUpper(pdbAgeStr), "/")
 			err = os.MkdirAll(downloadDir, 0755)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			// Download the symbol file.
-			downloadPath := downloadDir + pdbName
+			// Download the symbol file. FilePath concatenates guid and age
+			downloadPath := filepath.Join(downloadDir, pdbName)
 			err = downloadSymbolFile(downloadPath, downloadURL)
 			if err != nil {
 				log.Fatal(err)
