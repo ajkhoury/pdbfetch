@@ -282,7 +282,7 @@ func main() {
 			log.Println(string(debugDir.SymbolName)+":", pdbGuid, pdbAgeStr, downloadURL)
 
 			// Create directory for saving symbol file.
-			downloadDir := filepath.Join(saveDirectory, pdbName, strings.ToUpper(pdbGuidStr)+strings.ToUpper(pdbAgeStr), "/")
+			downloadDir := filepath.Join(saveDirectory, pdbName, strings.ToUpper(pdbGuidStr)+strings.ToUpper(pdbAgeStr))
 			err = os.MkdirAll(downloadDir, 0755)
 			if err != nil {
 				log.Fatal(err)
