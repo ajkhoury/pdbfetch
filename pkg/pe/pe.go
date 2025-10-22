@@ -123,11 +123,6 @@ func PE(filename string) (pe *PEFile, err error) {
 		SetFlags(pe.OptionalHeader64.flags, DllCharacteristics, uint32(pe.OptionalHeader64.DllCharacteristics))
 	}
 
-	// Windows 8 specific check
-	if pe.OptionalHeader.AddressOfEntryPoint < pe.OptionalHeader.SizeOfHeaders {
-		log.Println("WARNING: SizeOfHeaders is smaller than AddressOfEntryPoint - this file cannot run under Windows 8")
-	}
-
 	// Read the symbol table.
 	if pe.FileHeader.PointerToSymbolTable != 0 {
 		numberOfSymbols := int(pe.FileHeader.NumberOfSymbols)
@@ -224,13 +219,15 @@ func PE(filename string) (pe *PEFile, err error) {
 
 	pe.calculateHeaderEnd(offset)
 
-	if pe.getSectionByRva(pe.OptionalHeader.AddressOfEntryPoint) != nil {
-		epOffset := pe.getOffsetFromRva(pe.OptionalHeader.AddressOfEntryPoint)
-		if epOffset > pe.dataLen {
-			log.Printf("AddressOfEntryPoint lies outside the file: 0x%x", pe.OptionalHeader.AddressOfEntryPoint)
+	if pe.OptionalHeader.AddressOfEntryPoint != 0 {
+		if pe.getSectionByRva(pe.OptionalHeader.AddressOfEntryPoint) != nil {
+			epOffset := pe.getOffsetFromRva(pe.OptionalHeader.AddressOfEntryPoint)
+			if epOffset > pe.dataLen {
+				log.Printf("AddressOfEntryPoint lies outside the file: 0x%x", pe.OptionalHeader.AddressOfEntryPoint)
+			}
+		} else {
+			log.Printf("AddressOfEntryPoint lies outside the section boundaries: 0x%x", pe.OptionalHeader.AddressOfEntryPoint)
 		}
-	} else {
-		log.Printf("AddressOfEntryPoint lies outside the section boundaries: 0x%x", pe.OptionalHeader.AddressOfEntryPoint)
 	}
 
 	err = pe.parseDataDirectories()
@@ -565,9 +562,10 @@ func (p *PEFile) getSectionAlignment() uint32 {
 // According to the document:
 // [ Microsoft Portable Executable and Common Object File Format Specification ]
 // "The alignment factor (in bytes) that is used to align the raw data of sections in
-//  the image file. The value should be a power of 2 between 512 and 64 K, inclusive.
-//  The default is 512. If the SectionAlignment is less than the architecture's page
-//  size, then FileAlignment must match SectionAlignment."
+//
+//	the image file. The value should be a power of 2 between 512 and 64 K, inclusive.
+//	The default is 512. If the SectionAlignment is less than the architecture's page
+//	size, then FileAlignment must match SectionAlignment."
 //
 // The following is a hard-coded constant if the Windows loader
 func (p *PEFile) adjustFileAlignment(pointer, fileAlignment uint32) uint32 {
@@ -588,8 +586,9 @@ func (p *PEFile) adjustFileAlignment(pointer, fileAlignment uint32) uint32 {
 // According to the document:
 // [ Microsoft Portable Executable and Common Object File Format Specification ]
 // "The alignment (in bytes) of sections when they are loaded into memory. It must be
-//  greater than or equal to FileAlignment. The default is the page size for the
-//  architecture."
+//
+//	greater than or equal to FileAlignment. The default is the page size for the
+//	architecture."
 func (p *PEFile) adjustSectionAlignment(pointer, sectionAlignment, fileAlignment uint32) uint32 {
 	if fileAlignment < IMAGE_FILE_ALIGNMENT_HARDCODED_VALUE {
 		if fileAlignment != sectionAlignment {

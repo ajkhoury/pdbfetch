@@ -26,7 +26,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -60,11 +59,12 @@ func retry(url string, head bool, probeMethod int) (*http.Response, error) {
 	}
 
 	var urlStr string
-	if probeMethod == 1 {
+	switch probeMethod {
+	case 1:
 		urlStr = probeWithUnderscore(url)
-	} else if probeMethod == 2 {
+	case 2:
 		urlStr = probeWithFileptr(url)
-	} else {
+	default:
 		urlStr = url
 	}
 
@@ -79,7 +79,7 @@ func retry(url string, head bool, probeMethod int) (*http.Response, error) {
 }
 
 func processFileptrResponse(resp *http.Response) (int64, string) {
-	fileptrBytes, err := ioutil.ReadAll(resp.Body)
+	fileptrBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -203,9 +203,10 @@ func help() {
 	fmt.Println("Usage:")
 	fmt.Println("   ", filepath.Base(os.Args[0]), "pefile [directory]")
 	fmt.Println("Example:")
-	if runtime.GOOS == "windows" {
+	switch runtime.GOOS {
+	case "windows":
 		fmt.Println("   ", filepath.Base(os.Args[0]), "ExamplePE.exe \"C:\\symbols\"")
-	} else if runtime.GOOS == "linux" {
+	case "linux":
 		fmt.Println("   ", filepath.Base(os.Args[0]), "ExamplePE.exe \"/usr/share/symbols\"")
 	}
 	fmt.Println("")

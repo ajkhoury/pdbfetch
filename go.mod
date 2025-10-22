@@ -1,8 +1,9 @@
 module pdbfetch
 
-go 1.13
+go 1.24.0
 
-require (
-	github.com/edsrzf/mmap-go v1.0.0
-	golang.org/x/sys v0.0.0-20191113150313-8ad342257130
-)
+toolchain go1.24.9
+
+require github.com/edsrzf/mmap-go v1.2.0
+
+require golang.org/x/sys v0.37.0 // indirect
